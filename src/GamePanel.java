@@ -228,6 +228,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 
 	// Moving and spawning for team Builders
 	public void keyPressed(KeyEvent e) {
+		System.out.println("asdf");
 		for (Team t : teamNumber) {
 			boolean canType = true;
 			if (spawn == JOptionPane.YES_OPTION) {
