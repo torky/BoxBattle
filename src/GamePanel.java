@@ -35,6 +35,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 	Terrain terrain = new Terrain();
 	ArrayList<Team> teamNumber = new ArrayList<Team>();
 	ArrayList<Easy> easyNumber = new ArrayList<Easy>();
+	ArrayList<AI48> AI48Number = new ArrayList<AI48>();
 	ArrayList<Unit> allTroops = new ArrayList<Unit>();
 
 	// Game conditions
@@ -107,36 +108,70 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 	Team team3;
 	Team team4;
 	{
-		int AI = Integer.parseInt(JOptionPane
-				.showInputDialog("Pick the number of AI."));
-		if (AI == 1) {
-			team2 = new Easy(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
-			team3 = new Team(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
-			team4 = new Team(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
+		if (gameType == 48) {
+			int AI48 = Integer.parseInt(JOptionPane
+					.showInputDialog("Pick the number of Risk AI."));
+			if (AI48 == 1) {
+				team2 = new AI48(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
+				team3 = new Team(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
+				team4 = new Team(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
 
-			easyNumber.add((Easy) team2);
+				AI48Number.add((AI48) team2);
 
-		} else if (AI == 2) {
-			team2 = new Easy(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
-			team3 = new Easy(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
-			team4 = new Team(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
+			} else if (AI48 == 2) {
+				team2 = new AI48(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
+				team3 = new AI48(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
+				team4 = new Team(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
 
-			easyNumber.add((Easy) team2);
-			easyNumber.add((Easy) team3);
+				AI48Number.add((AI48) team2);
+				AI48Number.add((AI48) team3);
 
-		} else if (AI == 3) {
-			team2 = new Easy(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
-			team3 = new Easy(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
-			team4 = new Easy(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
+			} else if (AI48 == 3) {
+				team2 = new AI48(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
+				team3 = new AI48(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
+				team4 = new AI48(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
 
-			easyNumber.add((Easy) team2);
-			easyNumber.add((Easy) team3);
-			easyNumber.add((Easy) team4);
+				AI48Number.add((AI48) team2);
+				AI48Number.add((AI48) team3);
+				AI48Number.add((AI48) team4);
 
+			} else {
+				team2 = new Team(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
+				team3 = new Team(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
+				team4 = new Team(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
+			}
 		} else {
-			team2 = new Team(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
-			team3 = new Team(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
-			team4 = new Team(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
+			int EasyAI = Integer.parseInt(JOptionPane
+					.showInputDialog("Pick the number of Easy AI."));
+			if (EasyAI == 1) {
+				team2 = new Easy(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
+				team3 = new Team(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
+				team4 = new Team(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
+
+				easyNumber.add((Easy) team2);
+
+			} else if (EasyAI == 2) {
+				team2 = new Easy(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
+				team3 = new Easy(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
+				team4 = new Team(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
+
+				easyNumber.add((Easy) team2);
+				easyNumber.add((Easy) team3);
+
+			} else if (EasyAI == 3) {
+				team2 = new Easy(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
+				team3 = new Easy(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
+				team4 = new Easy(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
+
+				easyNumber.add((Easy) team2);
+				easyNumber.add((Easy) team3);
+				easyNumber.add((Easy) team4);
+
+			} else {
+				team2 = new Team(Color.YELLOW, KeyEvent.VK_B, 1, popLimiter);
+				team3 = new Team(Color.MAGENTA, KeyEvent.VK_X, 2, popLimiter);
+				team4 = new Team(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
+			}
 		}
 	}
 	Timer tm = new Timer(10, this);
@@ -178,6 +213,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 		for (Team t : teamNumber) {
 			t.fullReset();
 		}
+		System.out.println("resetstart");
+		structures.reset();
+		System.out.println("resetend");
 
 		terrain.reset();
 		int reset = JOptionPane.showConfirmDialog(null, "Reset rules?",
@@ -221,9 +259,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 			gameType = Integer.parseInt(JOptionPane
 					.showInputDialog("Pick the game type 4 or 5 or 48."));
 		}
-		structures = null;
-		structures = new Structures(gameType);
-
 	}
 
 	// Moving and spawning for team Builders
@@ -353,6 +388,11 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 		for (Easy ec : easyNumber) {
 
 			ec.actionEasy(e, teamNumber, terrain.totalObstructions, structures);
+
+		}
+		for (AI48 ai : AI48Number) {
+
+			ai.actionAI48(e, teamNumber, terrain.totalObstructions, structures);
 
 		}
 

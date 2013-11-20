@@ -82,12 +82,14 @@ public class Building {
 			if (defender == null) {
 				changeDefender(nearestUnit(u));
 			} else if (defender.health <= 0) {
+				defender = null;
 				if (nearestUnit(u).notDefending)
 					changeDefender(nearestUnit(u));
 			} else {
 				defender.defending(this);
 			}
 		}
+		System.out.println("Defender:"+defender);
 	}
 
 	public boolean pushOut(Unit u) {
