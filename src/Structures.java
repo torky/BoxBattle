@@ -12,7 +12,7 @@ public class Structures {
 
 	public Structures(int totalStructures) {
 		numberOfBuildings = totalStructures;
-		if (totalStructures == 48) {
+		if (numberOfBuildings == 48) {
 			int totalDistance = Main.heightOfFrame - StatisticPanel.height;
 			int split = (int) numberOfBuildings / increment;
 			int spacePerBuilding = (int) totalDistance / split;
@@ -40,7 +40,7 @@ public class Structures {
 				}
 			}
 		}
-		if (totalStructures == 5) {
+		if (numberOfBuildings == 5) {
 			for (int i = 0; i < numberOfBuildings; i++) {
 				if (i == 0) {
 					Building building = new Building(20, 20);
@@ -67,7 +67,7 @@ public class Structures {
 
 			}
 		}
-		if (totalStructures == 4) {
+		if (numberOfBuildings == 4) {
 			for (int i = 0; i < numberOfBuildings; i++) {
 				if (i == 0) {
 					Building building = new Building(20, 20);
@@ -98,8 +98,96 @@ public class Structures {
 	}
 
 	public void reset() {
+		System.out.println("reseting1");
+
 		for (Building b : totalBuildings) {
 			b.reset();
+			System.out.println("reseting");
+		}
+	}
+	
+	public void init(){
+		if (numberOfBuildings == 48) {
+			int totalDistance = Main.heightOfFrame - StatisticPanel.height;
+			int split = (int) numberOfBuildings / increment;
+			int spacePerBuilding = (int) totalDistance / split;
+			for (int i = 0; i < numberOfBuildings; i++) {
+				if (i * spacing + beginningSpacing > spacing * increment * 3) {
+					Building building = new Building((i - increment * 3)
+							* spacing + beginningSpacing, spacePerBuilding * 3
+							+ beginningSpacing * 2 + 10);
+					totalBuildings.add(building);
+				} else if (i * spacing + beginningSpacing > spacing * increment
+						* 2) {
+					Building building = new Building((i - increment * 2)
+							* spacing + beginningSpacing, spacePerBuilding * 2
+							+ beginningSpacing * 2 + 10);
+					totalBuildings.add(building);
+				} else if (i * spacing + beginningSpacing > spacing * increment) {
+					Building building = new Building((i - increment) * spacing
+							+ beginningSpacing, spacePerBuilding * 1
+							+ beginningSpacing);
+					totalBuildings.add(building);
+				} else {
+					Building building = new Building(i * spacing
+							+ beginningSpacing, beginningSpacing);
+					totalBuildings.add(building);
+				}
+			}
+		}
+		if (numberOfBuildings == 5) {
+			for (int i = 0; i < numberOfBuildings; i++) {
+				if (i == 0) {
+					Building building = new Building(20, 20);
+					totalBuildings.add(building);
+				} else if (i == 1) {
+					Building building = new Building(
+							Main.lengthOfFrame - 50 - 20, 20);
+					totalBuildings.add(building);
+				} else if (i == 2) {
+					Building building = new Building(20, Main.heightOfFrame
+							- StatisticPanel.height - 50 - 20);
+					totalBuildings.add(building);
+				} else if (i == 3) {
+					Building building = new Building(
+							Main.lengthOfFrame - 50 - 20, Main.heightOfFrame
+									- StatisticPanel.height - 50 - 20);
+					totalBuildings.add(building);
+				} else if (i == 4) {
+					Building building = new Building(
+							Main.lengthOfFrame / 2 - 25,
+							(Main.heightOfFrame - StatisticPanel.height) / 2 - 25);
+					totalBuildings.add(building);
+				}
+
+			}
+		}
+		if (numberOfBuildings == 4) {
+			for (int i = 0; i < numberOfBuildings; i++) {
+				if (i == 0) {
+					Building building = new Building(20, 20);
+					totalBuildings.add(building);
+				} else if (i == 1) {
+					Building building = new Building(
+							Main.lengthOfFrame - 50 - 20, 20);
+					totalBuildings.add(building);
+				} else if (i == 2) {
+					Building building = new Building(20, Main.heightOfFrame
+							- StatisticPanel.height - 50 - 20);
+					totalBuildings.add(building);
+				} else if (i == 3) {
+					Building building = new Building(
+							Main.lengthOfFrame - 50 - 20, Main.heightOfFrame
+									- StatisticPanel.height - 50 - 20);
+					totalBuildings.add(building);
+				} else if (i == 4) {
+					Building building = new Building(
+							Main.lengthOfFrame / 2 - 25,
+							(Main.heightOfFrame - StatisticPanel.height) / 2 - 25);
+					totalBuildings.add(building);
+				}
+
+			}
 		}
 	}
 

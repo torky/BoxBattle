@@ -1,7 +1,7 @@
 import java.awt.event.MouseEvent;
 import java.util.*;
 
-public class Unit extends Thread{
+public class Unit {
 
 	int width;
 	int height;
