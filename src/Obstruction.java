@@ -9,6 +9,7 @@ public class Obstruction {
 	int obstructionType;
 	boolean destroyable;
 
+	//Initializing the obstruction
 	public Obstruction(int xpos, int ypos, int Width, int Height, boolean canDie,
 			int totalhealth, int type) {
 
@@ -28,6 +29,7 @@ public class Obstruction {
 		}
 	}
 
+	//Obstructing the units
 	public boolean pushOut(Unit u) {
 		if ((y <= u.y + u.height && y >= u.y - height)
 				&& (x <= u.x + u.width && x >= u.x - width)) {
@@ -40,6 +42,7 @@ public class Obstruction {
 		}
 	}
 
+	//Deleting the obstruction
 	public void delete(boolean on, int xpos, int ypos) {
 		if (on) {
 			if ((y <= ypos && y >= ypos - height)

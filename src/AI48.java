@@ -12,10 +12,13 @@ public class AI48 extends Team {
 
 	public void actionAI48(ActionEvent e, ArrayList<Team> teams,
 			ArrayList<Obstruction> obstructions, Structures structure) {
+		//Counter Clumping and Units not staying at the cursor
 		xStart += r.nextInt(2);
 		yStart += r.nextInt(2);
 		xStart -= r.nextInt(2);
 		yStart -= r.nextInt(2);
+		
+		//Choosing to fight team with most money
 		Team target = overPoweredTeam(teams);
 		
 		if(target == null){
@@ -23,8 +26,10 @@ public class AI48 extends Team {
 		}else{
 			Unit u = nearestUnit(target.totalTroops);
 			if (u == null) {
+				//Counter crashes (I think)
 				spawnUnit(0);
 			} else {
+				//Spawning units once it has arrived at its destination
 				if (distanceFromUnit(u) < 10 * 10) {
 					if (population < populationLimit) {
 						spawnUnit(0);
@@ -32,9 +37,11 @@ public class AI48 extends Team {
 						spawnUnit(2);
 					}
 				} else {
-					direct(u.x, u.y, 3, "movement");
+					//Moving toward the target enemy
+					direct(u.x, u.y, 4, "movement");
 				}
 			}
+			//Moving away if there is a team that is too close that is not the target team.
 			for(Team t: teams){
 				if((t!=this)&&(t!=target)){
 					int distance = ((xStart - t.xStart) * (xStart - t.xStart) + (yStart - t.yStart) * (yStart - t.yStart));
@@ -60,6 +67,7 @@ public class AI48 extends Team {
 			}
 		}
 
+		//Targeting and Capturing Unguarded Buildings
 		Building b = searchForBuilding(structure.totalBuildings);
 		if (b != null) {
 			if (distanceFromBuilding(b) < 10 * 10) {
@@ -72,6 +80,7 @@ public class AI48 extends Team {
 				didNotConquer = true;
 			}
 		} else {
+		//When all the bases are captured, find nearest allied unit and spawn
 			Unit u = nearestUnit(totalTroops);
 			if (u == null) {
 				spawnUnit(0);
@@ -90,6 +99,7 @@ public class AI48 extends Team {
 		
 	}
 
+	//Move cursor to point
 	public void direct(float xOther, float yOther, int boingFactor, String type) {
 		if (xStart > xOther) {
 			xStart -= boingFactor
@@ -107,6 +117,7 @@ public class AI48 extends Team {
 		}
 	}
 
+	//Finds nearest Unit
 	public Unit nearestUnit(ArrayList<Unit> u) {
 		Unit mob = null;
 		for (Unit i : u) {
@@ -129,6 +140,7 @@ public class AI48 extends Team {
 		}
 	}
 
+	//Finds nearest empty building
 	public Building searchForBuilding(ArrayList<Building> buildings) {
 		Building closestBuilding = null;
 		for (Building b : buildings) {
@@ -148,11 +160,12 @@ public class AI48 extends Team {
 		return closestBuilding;
 	}
 	
+	//Finds the Winning Team
 	public Team overPoweredTeam(ArrayList<Team> teams){
 		Team teamWinning = null;
 		for(Team t: teams){
 			if(t!=this){
-				if(t.buildingsControlled>10){
+				if(t.buildingsControlled>12){
 					if(teamWinning == null){
 						teamWinning = t;
 					} else if(t.buildingsControlled>teamWinning.buildingsControlled){
@@ -164,6 +177,7 @@ public class AI48 extends Team {
 		return teamWinning;
 	}
 
+	//Finds distance or returns an extreme distance from a unit if there is an error.
 	public float distanceFromUnit(Unit u) {
 		float distance = 10000;
 
@@ -191,7 +205,8 @@ public class AI48 extends Team {
 			return distance;
 		}
 	}
-
+	
+	//Finds distance or returns an extreme distance from a Building if there is an error.
 	public float distanceFromBuilding(Building b) {
 		float distance = 10000;
 
@@ -220,6 +235,7 @@ public class AI48 extends Team {
 		}
 	}
 
+	//Speed of something
 	public float vectorSpeed(char vector, float speed, float x, float y,
 			float x2, float y2) {
 

@@ -32,10 +32,12 @@ public class Unit {
 
 	boolean attack = false;
 
+	// Initializing the Unit and choosing its qualities
 	public Unit(int kind, Team team, int whichSide) {
 		type = kind;
 		side = whichSide;
 		notDefending = true;
+		// Fast Unit
 		if (type == 0) {
 			width = 10;
 			height = 10;
@@ -50,7 +52,9 @@ public class Unit {
 			reloadTime = 100;
 			boing = 20;
 			soldierPop = 1;
-		} else if (type == 1) {
+		}
+		// Strong Unit
+		else if (type == 1) {
 			width = 10;
 			height = 10;
 			speed = 0.35F;
@@ -64,7 +68,9 @@ public class Unit {
 			reloadTime = 100;
 			boing = 10;
 			soldierPop = 2;
-		} else if (type == 2) {
+		}
+		// Ranged Unit
+		else if (type == 2) {
 			width = 10;
 			height = 10;
 			speed = 0.25F;
@@ -78,7 +84,9 @@ public class Unit {
 			reloadTime = 100;
 			boing = 30;
 			soldierPop = 1;
-		} else if (type == 3) {
+		}
+		// Wall Unit
+		else if (type == 3) {
 			width = 30;
 			height = 30;
 			speed = 0;
@@ -120,22 +128,26 @@ public class Unit {
 				beingDamaged(u);
 			}
 		}
-		resetKills();
 		reload();
 		restrict(xlength, yheight, xstart, ystart);
+		// Old code
+		resetKills();
+
 	}
 
+	// Just to free it from its base (maybe utilized in the future)
 	public void notDefending() {
 		notDefending = true;
 	}
 
+	// This keeps the Unit in the base
 	public void defending(Building b) {
 		notDefending = false;
 		x = b.x + b.width / 2 - width / 2;
 		y = b.y + b.height / 2 - height / 2;
 	}
 
-	// Moving the mob
+	// The Unit Colliding and then moving away
 	public void direct(float xOther, float yOther, int width, int height,
 			int boingFactor, String type) {
 		if (type == "movement") {
@@ -171,6 +183,7 @@ public class Unit {
 		}
 	}
 
+	// Obstructing the Unit in the terrain
 	public void obstruct(Obstruction o) {
 		if (o.pushOut(this)) {
 			if (o.obstructionType == MouseEvent.BUTTON1) {
@@ -189,7 +202,7 @@ public class Unit {
 		}
 	}
 
-	// This prevents the mobs from clumping
+	// This prevents the Units from clumping
 	public void collision(Unit mob) {
 		if (mob != null) {
 			if ((mob.health > 0)) {
@@ -209,6 +222,7 @@ public class Unit {
 		}
 	}
 
+	// Gives the Unit Armor
 	public void buildingAura(Building b) {
 		if ((b != null) && (b.buildingSide == side)) {
 			if ((y <= b.y + b.height && y >= b.y - height)
@@ -294,18 +308,23 @@ public class Unit {
 
 	}
 
+	// Moves the Unit in a direction
+	// Right
 	public void xPlus() {
 		x += speed * boing;
 	}
 
+	// Left
 	public void xMinus() {
 		x -= speed * boing;
 	}
 
+	// Down
 	public void yPlus() {
 		y += speed * boing;
 	}
 
+	// Up
 	public void yMinus() {
 		y -= speed * boing;
 	}
@@ -377,6 +396,7 @@ public class Unit {
 		}
 	}
 
+	//Adding Kills for the Unit (A bit useless)
 	public int addKills() {
 
 		if (returnedKills) {
@@ -399,7 +419,7 @@ public class Unit {
 		}
 	}
 
-	// This injures the unit itself
+	// This method deals the specified damage to the Unit itself
 	public void beingDamaged(ArrayList<Unit> mobArray) {
 		for (Unit mob : mobArray) {
 			if (mob != null)

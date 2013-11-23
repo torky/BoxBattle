@@ -15,6 +15,7 @@ import javax.swing.border.EtchedBorder;
 public class GamePanel extends JPanel implements ActionListener, KeyListener,
 		MouseListener, MouseMotionListener, Runnable {
 
+	// Initialization
 	public GamePanel() {
 		tm.start();
 		addKeyListener(this);
@@ -55,6 +56,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 	int timeTilIncome = 0;
 	int incomeRate = 500;
 
+	// Picking game conditions
 	{
 		// Kill limit or not
 		kill = JOptionPane.showConfirmDialog(null,
@@ -101,12 +103,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 			System.out.println("ge");
 		}
 	}
+
+	// Images (Don't know why, but I can't seem to load an image)
 	ImageIcon get = new ImageIcon();
 
+	// there has to be at least 1 human player
 	Team team1 = new Team(Color.RED, KeyEvent.VK_1, 0, popLimiter);
 	Team team2;
 	Team team3;
 	Team team4;
+
+	// Choosing the number of AIs
 	{
 		if (gameType == 48) {
 			int AI48 = Integer.parseInt(JOptionPane
@@ -174,6 +181,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 			}
 		}
 	}
+
+	// Timer
 	Timer tm = new Timer(10, this);
 
 	int mouseX = 0;
@@ -209,6 +218,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 		repaint();
 	}
 
+	// Full reset, but doesn't reset cursor location (I have the code already
+	// prepared, but I'm just not using it)
 	public void resetEverything() {
 		for (Team t : teamNumber) {
 			t.fullReset();
@@ -263,7 +274,6 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 
 	// Moving and spawning for team Builders
 	public void keyPressed(KeyEvent e) {
-		System.out.println("asdf");
 		for (Team t : teamNumber) {
 			boolean canType = true;
 			if (spawn == JOptionPane.YES_OPTION) {
@@ -341,6 +351,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 	}
 
 	public void mouseClicked(MouseEvent e) {
+		// Deleting terrain
 		terrain.mouseClick(e);
 	}
 
@@ -354,6 +365,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 
 	public void mousePressed(MouseEvent e) {
 		terrain.mousePress(e);
+		// Initializing the white box
 		if (firstClick) {
 			mouseX = e.getX();
 			mouseY = e.getY();
@@ -363,6 +375,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 
 	public void mouseReleased(MouseEvent e) {
 		terrain.mouseRel(e, pause);
+		// Deleting the white box
 		firstClick = true;
 		mouseX = mouseY = boxX = boxY = mouseWidth = mouseHeight = 0;
 	}
@@ -372,6 +385,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 
 		structures.actionPer(allTroops);
 
+		// Adding the troops and refreshing them
 		for (Team t : teamNumber) {
 			if (allTroops.containsAll(t.totalTroops)) {
 			} else {
@@ -385,17 +399,21 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 
 		didNotStart = false;
 
+		// Activating the Easy AI
 		for (Easy ec : easyNumber) {
 
 			ec.actionEasy(e, teamNumber, terrain.totalObstructions, structures);
 
 		}
+
+		// Activating the Risk AI
 		for (AI48 ai : AI48Number) {
 
 			ai.actionAI48(e, teamNumber, terrain.totalObstructions, structures);
 
 		}
 
+		// Deleting dead troops
 		if (allTroops.isEmpty()) {
 		} else {
 			try {
@@ -419,6 +437,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 
 		// Controls for Builder box
 		for (Team t : teamNumber) {
+
+			// They do not always work
 
 			// Win by kills
 			if (kill == JOptionPane.YES_OPTION) {
@@ -455,6 +475,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 			}
 		}
 
+		//Pause button
 		if (pause) {
 			timeTilIncome--;
 
@@ -464,12 +485,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 						structures, timeTilIncome);
 
 			}
+			
+			//Income
 			if (timeTilIncome <= 0) {
 				timeTilIncome = incomeRate;
 			}
 		}
 	}
 
+	//Drawing the White Box
 	public void mouseDragged(MouseEvent e) {
 		if (mouseX < e.getX()) {
 			boxX = mouseX;
@@ -488,6 +512,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 	public void mouseMoved(MouseEvent e) {
 	}
 
+	//Yeah this one isn't being used.
 	public void run() {
 	}
 }

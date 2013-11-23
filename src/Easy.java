@@ -8,16 +8,23 @@ public class Easy extends Team {
 		super(tNumber, unit0Key, teamNumber, popLimit);
 	}
 
+	//Code for cursor
 	public void actionEasy(ActionEvent e, ArrayList<Team> teams,
 			ArrayList<Obstruction> obstructions, Structures structure) {
+		
+		//Ensure that the units actually don't stay on top of each other
 		xStart += r.nextInt(2);
 		yStart += r.nextInt(2);
 		xStart -= r.nextInt(2);
 		yStart -= r.nextInt(2);
+		
 		Unit u = nearestUnit(totalTroops);
+		
+		//Spawns a fast unit if there are no units
 		if (u == null) {
 			spawnUnit(0);
 		} else {
+			//Spawns units when its next to an allied unit
 			if (distanceFromUnit(u) < 10 * 10) {
 				if (population < populationLimit) {
 					spawnUnit(0);
@@ -25,12 +32,14 @@ public class Easy extends Team {
 					spawnUnit(2);
 				}
 			} else {
+				//Moves the thing toward the nearest allied unit
 				direct(u.x, u.y, 10, "movement");
 			}
 		}
 
 	}
 
+	//Moves the cursor
 	public void direct(float xOther, float yOther, int boingFactor, String type) {
 		if (xStart > xOther) {
 			xStart -= boingFactor
@@ -48,6 +57,7 @@ public class Easy extends Team {
 		}
 	}
 
+	//Finds nearest Unit
 	public Unit nearestUnit(ArrayList<Unit> u) {
 		Unit mob = null;
 		for (Unit i : u) {
@@ -70,6 +80,7 @@ public class Easy extends Team {
 		}
 	}
 
+	//Finds distance from unit
 	public float distanceFromUnit(Unit u) {
 		float distance = 10000;
 
@@ -98,6 +109,7 @@ public class Easy extends Team {
 		}
 	}
 
+	//Finds the vector speed
 	public float vectorSpeed(char vector, float speed, float x, float y,
 			float x2, float y2) {
 
