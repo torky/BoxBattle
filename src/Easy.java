@@ -8,6 +8,8 @@ public class Easy extends Team {
 		super(tNumber, unit0Key, teamNumber, popLimit);
 	}
 
+	boolean didNotAddObstructions = true;
+	
 	//Code for cursor
 	public void actionEasy(ActionEvent e, ArrayList<Team> teams,
 			ArrayList<Obstruction> obstructions, Structures structure) {

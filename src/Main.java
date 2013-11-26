@@ -1,5 +1,5 @@
+
 import java.applet.Applet;
-import javax.swing.JFrame;
 
 public class Main extends Applet{
 	

@@ -474,6 +474,25 @@ public class Team extends Thread {
 				+ numberOfSoldiersType2 * 1;
 
 	}
+	
+	public void addEnemies( ArrayList<Team> teams){
+		for (Team t : teams) {
+			if ((t != this)) {
+				// Adds Enemy Units to enemyUnits Collection
+				if (enemyUnits.containsAll(t.totalTroops)) {
+				} else {
+					enemyUnits.removeAll(t.totalTroops);
+					enemyUnits.addAll(t.totalTroops);
+				}
+				// Adds Enemy Buildings to enemyBuildings Collection
+				if (enemyBuildings.containsAll(t.enemyBuildings)) {
+				} else {
+					enemyBuildings.removeAll(t.enemyBuildings);
+					enemyBuildings.addAll(t.enemyBuildings);
+				}
+			}
+		}
+	}
 
 	//Action depending on the game being paused
 	public void actionPer(ActionEvent e, ArrayList<Team> teams,
@@ -517,23 +536,8 @@ public class Team extends Thread {
 			speedup = 0;
 			enemyUnits.clear();
 		}
-
-		for (Team t : teams) {
-			if ((t != this)) {
-				// Adds Enemy Units to enemyUnits Collection
-				if (enemyUnits.containsAll(t.totalTroops)) {
-				} else {
-					enemyUnits.removeAll(t.totalTroops);
-					enemyUnits.addAll(t.totalTroops);
-				}
-				// Adds Enemy Buildings to enemyBuildings Collection
-				if (enemyBuildings.containsAll(t.enemyBuildings)) {
-				} else {
-					enemyBuildings.removeAll(t.enemyBuildings);
-					enemyBuildings.addAll(t.enemyBuildings);
-				}
-			}
-		}
+		
+		addEnemies(teams);
 
 		// Deletes allied Units that have died
 		if (totalTroops.isEmpty()) {

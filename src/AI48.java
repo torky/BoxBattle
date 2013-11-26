@@ -3,33 +3,74 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 public class AI48 extends Team {
-	
+
 	boolean didNotConquer = true;
+	boolean AILastDitch = false;
 
 	public AI48(Color tNumber, int unit0Key, int teamNumber, int popLimit) {
 		super(tNumber, unit0Key, teamNumber, popLimit);
 	}
 
+	public void addEnemies(ArrayList<Team> teams) {
+		if (AILastDitch) {
+			Team target = overPoweredTeam(teams);
+			// Adds Enemy Units to enemyUnits Collection
+			try {
+				if (enemyUnits.containsAll(target.totalTroops)) {
+				} else {
+					enemyUnits.removeAll(target.totalTroops);
+					enemyUnits.addAll(target.totalTroops);
+				}
+				// Adds Enemy Buildings to enemyBuildings Collection
+				if (enemyBuildings.containsAll(target.enemyBuildings)) {
+				} else {
+					enemyBuildings.removeAll(target.enemyBuildings);
+					enemyBuildings.addAll(target.enemyBuildings);
+				}
+			} catch (Exception e) {
+
+			}
+		} else {
+			for (Team t : teams) {
+				if ((t != this)) {
+					// Adds Enemy Units to enemyUnits Collection
+					if (enemyUnits.containsAll(t.totalTroops)) {
+					} else {
+						enemyUnits.removeAll(t.totalTroops);
+						enemyUnits.addAll(t.totalTroops);
+					}
+					// Adds Enemy Buildings to enemyBuildings Collection
+					if (enemyBuildings.containsAll(t.enemyBuildings)) {
+					} else {
+						enemyBuildings.removeAll(t.enemyBuildings);
+						enemyBuildings.addAll(t.enemyBuildings);
+					}
+				}
+			}
+		}
+	}
+
 	public void actionAI48(ActionEvent e, ArrayList<Team> teams,
 			ArrayList<Obstruction> obstructions, Structures structure) {
-		//Counter Clumping and Units not staying at the cursor
+		// Counter Clumping and Units not staying at the cursor
 		xStart += r.nextInt(2);
 		yStart += r.nextInt(2);
 		xStart -= r.nextInt(2);
 		yStart -= r.nextInt(2);
-		
-		//Choosing to fight team with most money
+
+		// Choosing to fight team with most money
 		Team target = overPoweredTeam(teams);
-		
-		if(target == null){
-			
-		}else{
+
+		if (target == null) {
+			AILastDitch = false;
+		} else {
+			AILastDitch = true;
 			Unit u = nearestUnit(target.totalTroops);
 			if (u == null) {
-				//Counter crashes (I think)
+				// Counter crashes (I think)
 				spawnUnit(0);
 			} else {
-				//Spawning units once it has arrived at its destination
+				// Spawning units once it has arrived at its destination
 				if (distanceFromUnit(u) < 10 * 10) {
 					if (population < populationLimit) {
 						spawnUnit(0);
@@ -37,37 +78,39 @@ public class AI48 extends Team {
 						spawnUnit(2);
 					}
 				} else {
-					//Moving toward the target enemy
+					// Moving toward the target enemy
 					direct(u.x, u.y, 4, "movement");
 				}
 			}
-			//Moving away if there is a team that is too close that is not the target team.
-			for(Team t: teams){
-				if((t!=this)&&(t!=target)){
-					int distance = ((xStart - t.xStart) * (xStart - t.xStart) + (yStart - t.yStart) * (yStart - t.yStart));
+			// Moving away if there is a team that is too close that is not the
+			// target team.
+			for (Team t : teams) {
+				if ((t != this) && (t != target)) {
+					int distance = ((xStart - t.xStart) * (xStart - t.xStart) + (yStart - t.yStart)
+							* (yStart - t.yStart));
 					int totalMoved = 500;
 					int moveDistance = r.nextInt(totalMoved);
-					if(distance<100*100){
-						if(r.nextBoolean()){
-							xStart+=moveDistance;
-							totalMoved-=moveDistance;
-						}else{
-							xStart-=moveDistance;
-							totalMoved-=moveDistance;
+					if (distance < 100 * 100) {
+						if (r.nextBoolean()) {
+							xStart += moveDistance;
+							totalMoved -= moveDistance;
+						} else {
+							xStart -= moveDistance;
+							totalMoved -= moveDistance;
 						}
-						if(r.nextBoolean()){
-							yStart+=totalMoved;
-							totalMoved-=totalMoved;
-						}else{
-							yStart-=totalMoved;
-							totalMoved-=totalMoved;
+						if (r.nextBoolean()) {
+							yStart += totalMoved;
+							totalMoved -= totalMoved;
+						} else {
+							yStart -= totalMoved;
+							totalMoved -= totalMoved;
 						}
 					}
 				}
 			}
 		}
 
-		//Targeting and Capturing Unguarded Buildings
+		// Targeting and Capturing Unguarded Buildings
 		Building b = searchForBuilding(structure.totalBuildings);
 		if (b != null) {
 			if (distanceFromBuilding(b) < 10 * 10) {
@@ -75,12 +118,13 @@ public class AI48 extends Team {
 					spawnUnit(3);
 					didNotConquer = false;
 				}
-			}else{
+			} else {
 				direct(b.x, b.y, 2, "movement");
 				didNotConquer = true;
 			}
 		} else {
-		//When all the bases are captured, find nearest allied unit and spawn
+			// When all the bases are captured, find nearest allied unit and
+			// spawn
 			Unit u = nearestUnit(totalTroops);
 			if (u == null) {
 				spawnUnit(0);
@@ -96,10 +140,10 @@ public class AI48 extends Team {
 				}
 			}
 		}
-		
+
 	}
 
-	//Move cursor to point
+	// Move cursor to point
 	public void direct(float xOther, float yOther, int boingFactor, String type) {
 		if (xStart > xOther) {
 			xStart -= boingFactor
@@ -117,7 +161,7 @@ public class AI48 extends Team {
 		}
 	}
 
-	//Finds nearest Unit
+	// Finds nearest Unit
 	public Unit nearestUnit(ArrayList<Unit> u) {
 		Unit mob = null;
 		for (Unit i : u) {
@@ -140,7 +184,7 @@ public class AI48 extends Team {
 		}
 	}
 
-	//Finds nearest empty building
+	// Finds nearest empty building
 	public Building searchForBuilding(ArrayList<Building> buildings) {
 		Building closestBuilding = null;
 		for (Building b : buildings) {
@@ -159,16 +203,16 @@ public class AI48 extends Team {
 		}
 		return closestBuilding;
 	}
-	
-	//Finds the Winning Team
-	public Team overPoweredTeam(ArrayList<Team> teams){
+
+	// Finds the Winning Team
+	public Team overPoweredTeam(ArrayList<Team> teams) {
 		Team teamWinning = null;
-		for(Team t: teams){
-			if(t!=this){
-				if(t.buildingsControlled>12){
-					if(teamWinning == null){
+		for (Team t : teams) {
+			if (t != this) {
+				if (t.buildingsControlled > 15) {
+					if (teamWinning == null) {
 						teamWinning = t;
-					} else if(t.buildingsControlled>teamWinning.buildingsControlled){
+					} else if (t.buildingsControlled > teamWinning.buildingsControlled) {
 						teamWinning = t;
 					}
 				}
@@ -177,27 +221,37 @@ public class AI48 extends Team {
 		return teamWinning;
 	}
 
-	//Finds distance or returns an extreme distance from a unit if there is an error.
+	// Finds distance or returns an extreme distance from a unit if there is an
+	// error.
 	public float distanceFromUnit(Unit u) {
 		float distance = 10000;
 
 		if ((u != null) && (u.health > 0)) {
 			distance = ((xStart - u.x) * (xStart - u.x) + (yStart - u.y)
 					* (yStart - u.y));
-			if (((xStart - u.x - u.width) * (xStart - u.x - u.width) + (yStart - u.y)
+			/*if (((xStart - u.x - u.width) * (xStart - u.x - u.width) + (yStart - u.y)
 					* (yStart - u.y)) < distance) {
 				distance = ((xStart - u.x - u.width) * (xStart - u.x) + (yStart - u.y)
 						* (yStart - u.y));
+			}*/
+			if(distanceSquared(xStart, yStart, u.x, u.y, u.width, 0)<distance){
+				distance = distanceSquared(xStart, yStart, u.x, u.y, u.width, 0);
 			}
-			if (((xStart - u.x) * (xStart - u.x) + (yStart - u.y - u.height)
+			/*if (((xStart - u.x) * (xStart - u.x) + (yStart - u.y - u.height)
 					* (yStart - u.y - u.height)) < distance) {
 				distance = ((xStart - u.x) * (xStart - u.x) + (yStart - u.y - u.height)
 						* (yStart - u.y - u.height));
+			}*/
+			if(distanceSquared(xStart, yStart, u.x, u.y, 0, u.height)<distance){
+				distance = distanceSquared(xStart, yStart, u.x, u.y, 0, u.height);
 			}
-			if (((xStart - u.x - u.width) * (xStart - u.x - u.width) + (yStart - u.y)
+			/*if (((xStart - u.x - u.width) * (xStart - u.x - u.width) + (yStart - u.y)
 					* (yStart - u.y)) < distance) {
 				distance = ((xStart - u.x - u.width) * (xStart - u.x - u.width) + (yStart - u.y)
 						* (yStart - u.y));
+			}*/
+			if(distanceSquared(xStart, yStart, u.x, u.y, 0, u.height)<distance){
+				distance = distanceSquared(xStart, yStart, u.x, u.y, u.width, u.height );
 			}
 			return distance;
 		} else {
@@ -206,7 +260,14 @@ public class AI48 extends Team {
 		}
 	}
 	
-	//Finds distance or returns an extreme distance from a Building if there is an error.
+	public float distanceSquared(float x1, float y1, float x2, float y2, float width, float height){
+		float distanceSquared = ((x1 - x2 - width) * (x1 - x2 - width) + (y1 - y2 - height)
+				* (y1 - y2 - height));
+		return distanceSquared;
+	}
+
+	// Finds distance or returns an extreme distance from a Building if there is
+	// an error.
 	public float distanceFromBuilding(Building b) {
 		float distance = 10000;
 
@@ -235,7 +296,7 @@ public class AI48 extends Team {
 		}
 	}
 
-	//Speed of something
+	// Speed of something
 	public float vectorSpeed(char vector, float speed, float x, float y,
 			float x2, float y2) {
 
