@@ -26,6 +26,8 @@ public class Unit {
 	int augmentPower = 0;
 	int armor = 0;
 
+	Unit enemyUnit;
+
 	Team team;
 
 	Random r = new Random();
@@ -111,28 +113,49 @@ public class Unit {
 		for (Obstruction o : obstructions) {
 			obstruct(o);
 		}
+
+		targetEnemy(u, ally);
+
 		if ((nearestEnemy(u) != null) && (this != null)) {
-			for (Unit i : u) {
-				collision(i);
-			}
-			for (Unit i : ally) {
-				if (i != this) {
-					collision(i);
-				}
-			}
-			if (notDefending) {
-				move(nearestEnemy(u));
-			}
-			attack(nearestEnemy(u));
+			collision(u);
+			collision(ally);
 			if (health > 0) {
 				beingDamaged(u);
 			}
 		}
+
+		if (enemyUnit != null) {
+			if (notDefending) {
+				move(enemyUnit);
+			}
+		}
+
+		attack(enemyUnit);
+
 		reload();
 		restrict(xlength, yheight, xstart, ystart);
 		// Old code
 		resetKills();
 
+	}
+
+	public void targetEnemy(ArrayList<Unit> enemyUnitList,ArrayList<Unit> allyUnitList) {
+		if (enemyUnitList.isEmpty()) {
+
+		} else {
+			if (enemyUnit == null) {
+				enemyUnit = nearestEnemy(enemyUnitList);
+			} else if (enemyUnit.health <= 0) {
+				enemyUnit = nearestEnemy(enemyUnitList);
+			} else if ((distanceFromUnit(enemyUnit) > 20 * 20)) {
+				if (collision(enemyUnitList)) {
+					enemyUnit = nearestEnemy(enemyUnitList);
+				}
+				if (collision(allyUnitList)) {
+					enemyUnit = nearestEnemy(enemyUnitList);
+				}
+			}
+		}
 	}
 
 	// Just to free it from its base (maybe utilized in the future)
@@ -203,23 +226,29 @@ public class Unit {
 	}
 
 	// This prevents the Units from clumping
-	public void collision(Unit mob) {
-		if (mob != null) {
-			if ((mob.health > 0)) {
-				if ((y <= mob.y + mob.height && y >= mob.y - height)
-						&& (x <= mob.x + mob.width && x >= mob.x - width)) {
-					direct(mob.x, mob.y, mob.width, mob.height, 1, "movement");
-					/*
-					 * if (x > mob.x) { x += vectorSpeed('x', speed, x, y,
-					 * mob.x, mob.y); } else if (x <= mob.x) { x -=
-					 * vectorSpeed('x', speed, x, y, mob.x, mob.y); } if (y >
-					 * mob.y) { y += vectorSpeed('y', speed, x, y, mob.x,
-					 * mob.y); } else if (y <= mob.y) { y -= vectorSpeed('y',
-					 * speed, x, y, mob.x, mob.y); }
-					 */
+	public boolean collision(ArrayList<Unit> arrayList) {
+		boolean collides = false;
+		for (Unit mob : arrayList) {
+			if ((mob != null)&&(mob != this)) {
+				if ((mob.health > 0)) {
+					if ((y <= mob.y + mob.height && y >= mob.y - height)
+							&& (x <= mob.x + mob.width && x >= mob.x - width)) {
+						direct(mob.x, mob.y, mob.width, mob.height, 1,
+								"movement");
+						collides = true;
+						/*
+						 * if (x > mob.x) { x += vectorSpeed('x', speed, x, y,
+						 * mob.x, mob.y); } else if (x <= mob.x) { x -=
+						 * vectorSpeed('x', speed, x, y, mob.x, mob.y); } if (y
+						 * > mob.y) { y += vectorSpeed('y', speed, x, y, mob.x,
+						 * mob.y); } else if (y <= mob.y) { y -=
+						 * vectorSpeed('y', speed, x, y, mob.x, mob.y); }
+						 */
+					}
 				}
 			}
 		}
+		return collides;
 	}
 
 	// Gives the Unit Armor
@@ -396,7 +425,7 @@ public class Unit {
 		}
 	}
 
-	//Adding Kills for the Unit (A bit useless)
+	// Adding Kills for the Unit (A bit useless)
 	public int addKills() {
 
 		if (returnedKills) {
