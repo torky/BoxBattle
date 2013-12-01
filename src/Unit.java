@@ -107,14 +107,14 @@ public class Unit {
 	}
 
 	// This makes the unit run
-	public void start(ArrayList<Unit> u, ArrayList<Unit> ally, int xlength,
-			int yheight, int xstart, int ystart,
-			ArrayList<Obstruction> obstructions) {
+	public void start(ArrayList<Unit> u, ArrayList<Unit> ally,
+			ArrayList<Unit> target, int xlength, int yheight, int xstart,
+			int ystart, ArrayList<Obstruction> obstructions) {
 		for (Obstruction o : obstructions) {
 			obstruct(o);
 		}
 
-		targetEnemy(u, ally);
+		targetEnemy(target, ally);
 
 		if ((nearestEnemy(u) != null) && (this != null)) {
 			collision(u);
@@ -139,7 +139,8 @@ public class Unit {
 
 	}
 
-	public void targetEnemy(ArrayList<Unit> enemyUnitList,ArrayList<Unit> allyUnitList) {
+	public void targetEnemy(ArrayList<Unit> enemyUnitList,
+			ArrayList<Unit> allyUnitList) {
 		if (enemyUnitList.isEmpty()) {
 
 		} else {
@@ -229,7 +230,7 @@ public class Unit {
 	public boolean collision(ArrayList<Unit> arrayList) {
 		boolean collides = false;
 		for (Unit mob : arrayList) {
-			if ((mob != null)&&(mob != this)) {
+			if ((mob != null) && (mob != this)) {
 				if ((mob.health > 0)) {
 					if ((y <= mob.y + mob.height && y >= mob.y - height)
 							&& (x <= mob.x + mob.width && x >= mob.x - width)) {
@@ -494,6 +495,10 @@ public class Unit {
 				y = ystart;
 			}
 		}
+	}
+
+	public void reAim() {
+		enemyUnit = null;
 	}
 
 }

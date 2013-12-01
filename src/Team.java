@@ -14,6 +14,9 @@ public class Team extends Thread {
 	// Collection of all the Enemy Units
 	ArrayList<Unit> enemyUnits = new ArrayList<Unit>();
 
+	// Collection of what Enemies you target
+	ArrayList<Unit> targetEnemyUnits = new ArrayList<Unit>();
+
 	// Total buildings
 	ArrayList<Building> totalBuildings = new ArrayList<Building>();
 	int buildingsControlled = 0;
@@ -474,8 +477,8 @@ public class Team extends Thread {
 				+ numberOfSoldiersType2 * 1;
 
 	}
-	
-	public void addEnemies( ArrayList<Team> teams){
+
+	public void addEnemies(ArrayList<Team> teams) {
 		for (Team t : teams) {
 			if ((t != this)) {
 				// Adds Enemy Units to enemyUnits Collection
@@ -494,7 +497,7 @@ public class Team extends Thread {
 		}
 	}
 
-	//Action depending on the game being paused
+	// Action depending on the game being paused
 	public void actionPer(ActionEvent e, ArrayList<Team> teams,
 			ArrayList<Obstruction> obstructions, Structures structure,
 			int timeTilIncome) {
@@ -507,7 +510,9 @@ public class Team extends Thread {
 			}
 		}
 
-		//Adding income based on the game type
+		setTargetEnemyUnits();
+
+		// Adding income based on the game type
 		if (structure.numberOfBuildings == 48) {
 			incomeAmount = 10 + buildingsControlled * 10;
 		} else if (structure.numberOfBuildings == 5) {
@@ -522,8 +527,8 @@ public class Team extends Thread {
 		if ((timeTilIncome <= 0) && (income <= maxIncome)) {
 			income += incomeAmount;
 		}
-		
-		//Calculating KD and KV
+
+		// Calculating KD and KV
 		if (totalDeaths > 0) {
 			KD = totalKills / totalDeaths;
 			KV = killValue / totalDeaths;
@@ -536,9 +541,40 @@ public class Team extends Thread {
 			speedup = 0;
 			enemyUnits.clear();
 		}
-		
+
 		addEnemies(teams);
 
+		dealWithUnitCollections(obstructions);
+
+		// Deletes allied Buildings that have been lost
+		if (totalBuildings.isEmpty()) {
+		} else {
+			try {
+				for (Building b : totalBuildings) {
+					if (b.buildingSide != number) {
+						totalBuildings.remove(totalBuildings.indexOf(b));
+					}
+				}
+			} catch (Exception e1) {
+			}
+		}
+
+		// Adds allied Buildings that have been gained
+		if (enemyBuildings.isEmpty()) {
+		} else {
+			try {
+				for (Building b : enemyBuildings) {
+					if (b.buildingSide == number) {
+						totalBuildings.add(b);
+						enemyBuildings.remove(enemyBuildings.indexOf(b));
+					}
+				}
+			} catch (Exception e1) {
+			}
+		}
+	}
+
+	public void dealWithUnitCollections(ArrayList<Obstruction> obstructions) {
 		// Deletes allied Units that have died
 		if (totalTroops.isEmpty()) {
 		} else {
@@ -565,7 +601,7 @@ public class Team extends Thread {
 							}
 						} else {
 
-							i.start(enemyUnits, totalTroops,
+							i.start(enemyUnits, totalTroops, targetEnemyUnits,
 									Main.lengthOfFrame, Main.heightOfFrame
 											- StatisticPanel.height, xStart,
 									yStart, obstructions);
@@ -610,33 +646,10 @@ public class Team extends Thread {
 			} catch (Exception e1) {
 			}
 		}
+	}
 
-		// Deletes allied Buildings that have been lost
-		if (totalBuildings.isEmpty()) {
-		} else {
-			try {
-				for (Building b : totalBuildings) {
-					if (b.buildingSide != number) {
-						totalBuildings.remove(totalBuildings.indexOf(b));
-					}
-				}
-			} catch (Exception e1) {
-			}
-		}
-
-		// Adds allied Buildings that have been gained
-		if (enemyBuildings.isEmpty()) {
-		} else {
-			try {
-				for (Building b : enemyBuildings) {
-					if (b.buildingSide == number) {
-						totalBuildings.add(b);
-						enemyBuildings.remove(enemyBuildings.indexOf(b));
-					}
-				}
-			} catch (Exception e1) {
-			}
-		}
+	public void setTargetEnemyUnits() {
+		targetEnemyUnits = enemyUnits;
 	}
 
 }

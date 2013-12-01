@@ -6,45 +6,29 @@ public class AI48 extends Team {
 
 	boolean didNotConquer = true;
 	boolean AILastDitch = false;
+	boolean changedAttackPattern = false;
 
 	public AI48(Color tNumber, int unit0Key, int teamNumber, int popLimit) {
 		super(tNumber, unit0Key, teamNumber, popLimit);
 	}
 
+	Team target;
+	
 	public void addEnemies(ArrayList<Team> teams) {
-		if (AILastDitch) {
-			Team target = overPoweredTeam(teams);
-			// Adds Enemy Units to enemyUnits Collection
-			try {
-				if (enemyUnits.containsAll(target.totalTroops)) {
+
+		for (Team t : teams) {
+			if ((t != this)) {
+				// Adds Enemy Units to enemyUnits Collection
+				if (enemyUnits.containsAll(t.totalTroops)) {
 				} else {
-					enemyUnits.removeAll(target.totalTroops);
-					enemyUnits.addAll(target.totalTroops);
+					enemyUnits.removeAll(t.totalTroops);
+					enemyUnits.addAll(t.totalTroops);
 				}
 				// Adds Enemy Buildings to enemyBuildings Collection
-				if (enemyBuildings.containsAll(target.enemyBuildings)) {
+				if (enemyBuildings.containsAll(t.enemyBuildings)) {
 				} else {
-					enemyBuildings.removeAll(target.enemyBuildings);
-					enemyBuildings.addAll(target.enemyBuildings);
-				}
-			} catch (Exception e) {
-
-			}
-		} else {
-			for (Team t : teams) {
-				if ((t != this)) {
-					// Adds Enemy Units to enemyUnits Collection
-					if (enemyUnits.containsAll(t.totalTroops)) {
-					} else {
-						enemyUnits.removeAll(t.totalTroops);
-						enemyUnits.addAll(t.totalTroops);
-					}
-					// Adds Enemy Buildings to enemyBuildings Collection
-					if (enemyBuildings.containsAll(t.enemyBuildings)) {
-					} else {
-						enemyBuildings.removeAll(t.enemyBuildings);
-						enemyBuildings.addAll(t.enemyBuildings);
-					}
+					enemyBuildings.removeAll(t.enemyBuildings);
+					enemyBuildings.addAll(t.enemyBuildings);
 				}
 			}
 		}
@@ -59,12 +43,20 @@ public class AI48 extends Team {
 		yStart -= r.nextInt(2);
 
 		// Choosing to fight team with most money
-		Team target = overPoweredTeam(teams);
+		target = overPoweredTeam(teams);
 
 		if (target == null) {
 			AILastDitch = false;
+			changedAttackPattern = false;
 		} else {
 			AILastDitch = true;
+
+			for (Unit u2 : totalTroops) {
+				u2.reAim();
+				u2.direct((float) xStart, (float) yStart, 0, 0,
+						(int) u2.speed * 2, "movement");
+			}
+
 			Unit u = nearestUnit(target.totalTroops);
 			if (u == null) {
 				// Counter crashes (I think)
@@ -82,6 +74,13 @@ public class AI48 extends Team {
 					direct(u.x, u.y, 4, "movement");
 				}
 			}
+			if (changedAttackPattern) {
+				for (Unit u1 : totalTroops) {
+					setTargetEnemyUnits();
+					u1.reAim();
+				}
+			}
+			changedAttackPattern = true;
 			// Moving away if there is a team that is too close that is not the
 			// target team.
 			for (Team t : teams) {
@@ -229,29 +228,34 @@ public class AI48 extends Team {
 		if ((u != null) && (u.health > 0)) {
 			distance = ((xStart - u.x) * (xStart - u.x) + (yStart - u.y)
 					* (yStart - u.y));
-			/*if (((xStart - u.x - u.width) * (xStart - u.x - u.width) + (yStart - u.y)
-					* (yStart - u.y)) < distance) {
-				distance = ((xStart - u.x - u.width) * (xStart - u.x) + (yStart - u.y)
-						* (yStart - u.y));
-			}*/
-			if(distanceSquared(xStart, yStart, u.x, u.y, u.width, 0)<distance){
+			/*
+			 * if (((xStart - u.x - u.width) * (xStart - u.x - u.width) +
+			 * (yStart - u.y) (yStart - u.y)) < distance) { distance = ((xStart
+			 * - u.x - u.width) * (xStart - u.x) + (yStart - u.y) (yStart -
+			 * u.y)); }
+			 */
+			if (distanceSquared(xStart, yStart, u.x, u.y, u.width, 0) < distance) {
 				distance = distanceSquared(xStart, yStart, u.x, u.y, u.width, 0);
 			}
-			/*if (((xStart - u.x) * (xStart - u.x) + (yStart - u.y - u.height)
-					* (yStart - u.y - u.height)) < distance) {
-				distance = ((xStart - u.x) * (xStart - u.x) + (yStart - u.y - u.height)
-						* (yStart - u.y - u.height));
-			}*/
-			if(distanceSquared(xStart, yStart, u.x, u.y, 0, u.height)<distance){
-				distance = distanceSquared(xStart, yStart, u.x, u.y, 0, u.height);
+			/*
+			 * if (((xStart - u.x) * (xStart - u.x) + (yStart - u.y - u.height)
+			 * (yStart - u.y - u.height)) < distance) { distance = ((xStart -
+			 * u.x) * (xStart - u.x) + (yStart - u.y - u.height) (yStart - u.y -
+			 * u.height)); }
+			 */
+			if (distanceSquared(xStart, yStart, u.x, u.y, 0, u.height) < distance) {
+				distance = distanceSquared(xStart, yStart, u.x, u.y, 0,
+						u.height);
 			}
-			/*if (((xStart - u.x - u.width) * (xStart - u.x - u.width) + (yStart - u.y)
-					* (yStart - u.y)) < distance) {
-				distance = ((xStart - u.x - u.width) * (xStart - u.x - u.width) + (yStart - u.y)
-						* (yStart - u.y));
-			}*/
-			if(distanceSquared(xStart, yStart, u.x, u.y, 0, u.height)<distance){
-				distance = distanceSquared(xStart, yStart, u.x, u.y, u.width, u.height );
+			/*
+			 * if (((xStart - u.x - u.width) * (xStart - u.x - u.width) +
+			 * (yStart - u.y) (yStart - u.y)) < distance) { distance = ((xStart
+			 * - u.x - u.width) * (xStart - u.x - u.width) + (yStart - u.y)
+			 * (yStart - u.y)); }
+			 */
+			if (distanceSquared(xStart, yStart, u.x, u.y, 0, u.height) < distance) {
+				distance = distanceSquared(xStart, yStart, u.x, u.y, u.width,
+						u.height);
 			}
 			return distance;
 		} else {
@@ -259,9 +263,11 @@ public class AI48 extends Team {
 			return distance;
 		}
 	}
-	
-	public float distanceSquared(float x1, float y1, float x2, float y2, float width, float height){
-		float distanceSquared = ((x1 - x2 - width) * (x1 - x2 - width) + (y1 - y2 - height)
+
+	public float distanceSquared(float x1, float y1, float x2, float y2,
+			float width, float height) {
+		float distanceSquared = ((x1 - x2 - width) * (x1 - x2 - width) + (y1
+				- y2 - height)
 				* (y1 - y2 - height));
 		return distanceSquared;
 	}
@@ -314,5 +320,22 @@ public class AI48 extends Team {
 			return 0;
 		}
 
+	}
+
+	public void setTargetEnemyUnits() {
+		if (AILastDitch) {
+			// Adds Enemy Units to enemyUnits Collection
+			try {
+				if (targetEnemyUnits.containsAll(target.totalTroops)) {
+				} else {
+					targetEnemyUnits.removeAll(target.totalTroops);
+					targetEnemyUnits.addAll(target.totalTroops);
+				}
+			} catch (Exception e) {
+
+			}
+		} else {
+			targetEnemyUnits = enemyUnits;
+		}
 	}
 }
