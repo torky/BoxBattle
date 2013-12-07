@@ -89,7 +89,6 @@ public class Building {
 				defender.defending(this);
 			}
 		}
-		System.out.println("Defender:"+defender);
 	}
 
 	public boolean pushOut(Unit u) {

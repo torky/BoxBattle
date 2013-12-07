@@ -358,6 +358,15 @@ public class Unit {
 	public void yMinus() {
 		y -= speed * boing;
 	}
+	
+	//teleport
+	public void setX(float xPosition){
+		x = xPosition;
+	}
+	
+	public void setY(float yPosition){
+		y = yPosition;
+	}
 
 	// This moves the unit
 	public void move(Unit mob) {
@@ -414,7 +423,6 @@ public class Unit {
 				}
 				if ((mob.health <= damage) && (mob.health >= 10)) {
 					kills++;
-					System.out.println("kills:" + kills);
 				}
 
 				return true;
@@ -500,5 +508,6 @@ public class Unit {
 	public void reAim() {
 		enemyUnit = null;
 	}
+	
 
 }

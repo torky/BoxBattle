@@ -104,6 +104,7 @@ public class AI48 extends Team {
 							yStart -= totalMoved;
 							totalMoved -= totalMoved;
 						}
+						teleportArmy();
 					}
 				}
 			}
@@ -322,6 +323,13 @@ public class AI48 extends Team {
 
 	}
 
+	public void teleportArmy(){
+		for(Unit u: totalTroops){
+			u.setX(xStart);
+			u.setY(yStart);
+		}
+	}
+	
 	public void setTargetEnemyUnits() {
 		if (AILastDitch) {
 			// Adds Enemy Units to enemyUnits Collection
@@ -330,6 +338,8 @@ public class AI48 extends Team {
 				} else {
 					targetEnemyUnits.removeAll(target.totalTroops);
 					targetEnemyUnits.addAll(target.totalTroops);
+					System.out.println("cleaning");
+
 				}
 			} catch (Exception e) {
 
