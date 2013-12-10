@@ -13,7 +13,7 @@ public class AI48 extends Team {
 	}
 
 	Team target;
-	
+
 	public void addEnemies(ArrayList<Team> teams) {
 
 		for (Team t : teams) {
@@ -72,6 +72,9 @@ public class AI48 extends Team {
 				} else {
 					// Moving toward the target enemy
 					direct(u.x, u.y, 4, "movement");
+					if (distanceFromUnit(nearestUnit(target.totalTroops)) > 50 * 50) {
+						teleportArmy();
+					}
 				}
 			}
 			if (changedAttackPattern) {
@@ -104,7 +107,6 @@ public class AI48 extends Team {
 							yStart -= totalMoved;
 							totalMoved -= totalMoved;
 						}
-						teleportArmy();
 					}
 				}
 			}
@@ -208,8 +210,8 @@ public class AI48 extends Team {
 	public Team overPoweredTeam(ArrayList<Team> teams) {
 		Team teamWinning = null;
 		for (Team t : teams) {
-			if (t != this) {
-				if (t.buildingsControlled > 15) {
+			if (t.buildingsControlled > 15) {
+				if (t != this) {
 					if (teamWinning == null) {
 						teamWinning = t;
 					} else if (t.buildingsControlled > teamWinning.buildingsControlled) {
@@ -323,13 +325,15 @@ public class AI48 extends Team {
 
 	}
 
-	public void teleportArmy(){
-		for(Unit u: totalTroops){
-			u.setX(xStart);
-			u.setY(yStart);
+	public void teleportArmy() {
+		for (Unit u : totalTroops) {
+			if (u.notDefending) {
+				u.setX(xStart);
+				u.setY(yStart);
+			}
 		}
 	}
-	
+
 	public void setTargetEnemyUnits() {
 		if (AILastDitch) {
 			// Adds Enemy Units to enemyUnits Collection
