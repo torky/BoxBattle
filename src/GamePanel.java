@@ -113,6 +113,8 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 	Team team3;
 	Team team4;
 
+	int areTeams;
+
 	// Choosing the number of AIs
 	{
 		if (gameType == 48) {
@@ -180,6 +182,29 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 				team4 = new Team(Color.GREEN, KeyEvent.VK_SLASH, 3, popLimiter);
 			}
 		}
+
+		areTeams = JOptionPane.showConfirmDialog(null, "Do you want teams?",
+				"Reset", JOptionPane.YES_NO_OPTION);
+
+		if (areTeams == JOptionPane.YES_OPTION) {
+
+			int allyTeamNumber1 = Integer.parseInt(JOptionPane
+					.showInputDialog("Pick the Ally Number for team 1."));
+			team1.setAllies(allyTeamNumber1);
+			
+			int allyTeamNumber2 = Integer.parseInt(JOptionPane
+					.showInputDialog("Pick the Ally Number for team 2."));
+			team2.setAllies(allyTeamNumber2);
+			
+			int allyTeamNumber3 = Integer.parseInt(JOptionPane
+					.showInputDialog("Pick the Ally Number for team 3."));
+			team3.setAllies(allyTeamNumber3);
+			
+			int allyTeamNumber4 = Integer.parseInt(JOptionPane
+					.showInputDialog("Pick the Ally Number for team 4."));
+			team4.setAllies(allyTeamNumber4);
+		}
+
 	}
 
 	// Timer
@@ -475,7 +500,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 			}
 		}
 
-		//Pause button
+		// Pause button
 		if (pause) {
 			timeTilIncome--;
 
@@ -485,15 +510,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 						structures, timeTilIncome);
 
 			}
-			
-			//Income
+
+			// Income
 			if (timeTilIncome <= 0) {
 				timeTilIncome = incomeRate;
 			}
 		}
 	}
 
-	//Drawing the White Box
+	// Drawing the White Box
 	public void mouseDragged(MouseEvent e) {
 		if (mouseX < e.getX()) {
 			boxX = mouseX;
@@ -512,7 +537,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener,
 	public void mouseMoved(MouseEvent e) {
 	}
 
-	//Yeah this one isn't being used.
+	// Yeah this one isn't being used.
 	public void run() {
 	}
 }

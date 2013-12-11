@@ -86,6 +86,10 @@ public class Team extends Thread {
 	Color teamColor;
 	String colorOfTeam;
 
+	// Allies
+	int allyTeamNumber;
+	boolean areAllies = false;
+
 	// Random generator
 	Random r = new Random();
 
@@ -100,6 +104,34 @@ public class Team extends Thread {
 	}
 
 	public Team(Color tNumber, int unit0Key, int teamNumber, int popLimit) {
+		teamColor = tNumber;
+		allyTeamNumber = teamNumber;
+		if (teamColor == Color.RED) {
+			colorOfTeam = "Red";
+		}
+		if (teamColor == Color.GREEN) {
+			colorOfTeam = "Green";
+		}
+		if (teamColor == Color.MAGENTA) {
+			colorOfTeam = "Magenta";
+		}
+		if (teamColor == Color.YELLOW) {
+			colorOfTeam = "Yellow";
+		}
+		key0 = unit0Key;
+		number = teamNumber;
+		populationLimit = popLimit;
+		resetBuilder();
+	}
+
+	public void setAllies(int Allies) {
+		allyTeamNumber = Allies;
+		areAllies = true;
+	}
+
+	public Team(Color tNumber, int unit0Key, int teamNumber, int popLimit,
+			int Allies) {
+		Allies = allyTeamNumber;
 		teamColor = tNumber;
 		if (teamColor == Color.RED) {
 			colorOfTeam = "Red";
@@ -481,17 +513,22 @@ public class Team extends Thread {
 	public void addEnemies(ArrayList<Team> teams) {
 		for (Team t : teams) {
 			if ((t != this)) {
-				// Adds Enemy Units to enemyUnits Collection
-				if (enemyUnits.containsAll(t.totalTroops)) {
-				} else {
-					enemyUnits.removeAll(t.totalTroops);
-					enemyUnits.addAll(t.totalTroops);
-				}
-				// Adds Enemy Buildings to enemyBuildings Collection
-				if (enemyBuildings.containsAll(t.enemyBuildings)) {
-				} else {
-					enemyBuildings.removeAll(t.enemyBuildings);
-					enemyBuildings.addAll(t.enemyBuildings);
+				System.out.println("ELLYNUMBA: " + t.allyTeamNumber
+						+ ", Moi Numba: " + allyTeamNumber);
+				if ((t.allyTeamNumber != allyTeamNumber)) {
+					System.out.println("AllyNumba" + allyTeamNumber);
+					// Adds Enemy Units to enemyUnits Collection
+					if (enemyUnits.containsAll(t.totalTroops)) {
+					} else {
+						enemyUnits.removeAll(t.totalTroops);
+						enemyUnits.addAll(t.totalTroops);
+					}
+					// Adds Enemy Buildings to enemyBuildings Collection
+					if (enemyBuildings.containsAll(t.enemyBuildings)) {
+					} else {
+						enemyBuildings.removeAll(t.enemyBuildings);
+						enemyBuildings.addAll(t.enemyBuildings);
+					}
 				}
 			}
 		}
@@ -570,6 +607,18 @@ public class Team extends Thread {
 					}
 				}
 			} catch (Exception e1) {
+			}
+		}
+	}
+
+	public void dealWithAllies(ArrayList<Team> teams) {
+		for (Team t : teams) {
+			if (t.allyTeamNumber == allyTeamNumber) {
+				if (totalTroops.containsAll(t.totalTroops)) {
+				} else {
+					totalTroops.removeAll(t.totalTroops);
+					totalTroops.addAll(t.totalTroops);
+				}
 			}
 		}
 	}

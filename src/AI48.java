@@ -7,32 +7,14 @@ public class AI48 extends Team {
 	boolean didNotConquer = true;
 	boolean AILastDitch = false;
 	boolean changedAttackPattern = false;
+	
+	
 
 	public AI48(Color tNumber, int unit0Key, int teamNumber, int popLimit) {
 		super(tNumber, unit0Key, teamNumber, popLimit);
 	}
 
 	Team target;
-
-	public void addEnemies(ArrayList<Team> teams) {
-
-		for (Team t : teams) {
-			if ((t != this)) {
-				// Adds Enemy Units to enemyUnits Collection
-				if (enemyUnits.containsAll(t.totalTroops)) {
-				} else {
-					enemyUnits.removeAll(t.totalTroops);
-					enemyUnits.addAll(t.totalTroops);
-				}
-				// Adds Enemy Buildings to enemyBuildings Collection
-				if (enemyBuildings.containsAll(t.enemyBuildings)) {
-				} else {
-					enemyBuildings.removeAll(t.enemyBuildings);
-					enemyBuildings.addAll(t.enemyBuildings);
-				}
-			}
-		}
-	}
 
 	public void actionAI48(ActionEvent e, ArrayList<Team> teams,
 			ArrayList<Obstruction> obstructions, Structures structure) {
@@ -41,7 +23,9 @@ public class AI48 extends Team {
 		yStart += r.nextInt(2);
 		xStart -= r.nextInt(2);
 		yStart -= r.nextInt(2);
-
+		
+		
+		
 		// Choosing to fight team with most money
 		target = overPoweredTeam(teams);
 
@@ -128,9 +112,24 @@ public class AI48 extends Team {
 			// When all the bases are captured, find nearest allied unit and
 			// spawn
 			Unit u = nearestUnit(totalTroops);
+			if(areAllies){
+				for(Team t:teams){
+					if(t.allyTeamNumber == allyTeamNumber){
+						if(distanceSquared(xStart,yStart,t.xStart,t.yStart,0,0)>=30*30){
+							direct(t.xStart,t.yStart, 2, "movement");
+							if (population < populationLimit) {
+								spawnUnit(0);
+								spawnUnit(1);
+								spawnUnit(2);
+							}
+						}
+					}
+				}
+			}
 			if (u == null) {
 				spawnUnit(0);
 			} else {
+				
 				if (distanceFromUnit(u) < 10 * 10) {
 					if (population < populationLimit) {
 						spawnUnit(0);
@@ -209,13 +208,15 @@ public class AI48 extends Team {
 	// Finds the Winning Team
 	public Team overPoweredTeam(ArrayList<Team> teams) {
 		Team teamWinning = null;
-		for (Team t : teams) {
-			if (t.buildingsControlled > 15) {
-				if (t != this) {
-					if (teamWinning == null) {
-						teamWinning = t;
-					} else if (t.buildingsControlled > teamWinning.buildingsControlled) {
-						teamWinning = t;
+		if (areAllies == false) {
+			for (Team t : teams) {
+				if (t.buildingsControlled > 15) {
+					if (t != this) {
+						if (teamWinning == null) {
+							teamWinning = t;
+						} else if (t.buildingsControlled > teamWinning.buildingsControlled) {
+							teamWinning = t;
+						}
 					}
 				}
 			}
@@ -337,16 +338,22 @@ public class AI48 extends Team {
 	public void setTargetEnemyUnits() {
 		if (AILastDitch) {
 			// Adds Enemy Units to enemyUnits Collection
-			try {
-				if (targetEnemyUnits.containsAll(target.totalTroops)) {
-				} else {
-					targetEnemyUnits.removeAll(target.totalTroops);
-					targetEnemyUnits.addAll(target.totalTroops);
-					System.out.println("cleaning");
+			if (target.allyTeamNumber != allyTeamNumber) {
+				try {
+
+					if (targetEnemyUnits.containsAll(target.totalTroops)) {
+					} else {
+						targetEnemyUnits.removeAll(target.totalTroops);
+						targetEnemyUnits.addAll(target.totalTroops);
+						System.out.println("cleaning");
+
+					}
+
+				} catch (Exception e) {
 
 				}
-			} catch (Exception e) {
-
+			} else {
+				targetEnemyUnits = enemyUnits;
 			}
 		} else {
 			targetEnemyUnits = enemyUnits;
