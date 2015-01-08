@@ -1,4 +1,5 @@
 # BoxBattle
+
 Game Explanation
 •	A kill is your box destroying an enemy box.
 •	A death is your box’s destruction. (Health of box indicated by the green bar on top of it)
@@ -11,10 +12,12 @@ Game Explanation
   o	Regular: +1 population, $10 (standard health, standard, fast movement)
   o	Ranged: +1 population $10 (little health, ranged, medium movement)
   o	Wall: +0 pop $10 (Prodigious health, no attack, no movement) 
+
 Quick Game
 •	There are 4 players.
 •	Each player tries to get 500 kills.
 •	No bases
+
 Standard Game
 •	Arranged how you want it (Click on the red/green boxes to enable/disable features).
 •	Green = enabled
@@ -24,6 +27,7 @@ Standard Game
   o	Each base is a gray box with a light-gray border
   o	Spawn a unit to capture the base or have units attack the base to capture it
   o	Each base gives a certain amount of money per turn
+
 Statistics Panel
 •	T0 – number of regular
 •	T1 – number of armored
@@ -40,6 +44,7 @@ Statistics Panel
 •	Spawn Limit – maximum number of troops a player can spawn
 •	Population Limit – maximum population of total units
 •	Time Til Salary – the time left until you get your next paycheck of money
+
 Obstacle
 •	When game is running, units can destroy the obstacles created.
 •	When game is not running, units cannot destroy the obstacles created.
@@ -54,31 +59,37 @@ AI (computer)
 •	Game (48) AI
   o	Spawns Walls at open bases
   o	Teleports whole army to attack a player after he or she controls a certain number of bases 
+
 Game Controls
+
 Player 1 keys (red)
 •	WASD – moves cursor
 •	E – armored
 •	Z – regular
 •	R – ranged
 •	Q – wall
+
 Player 2 keys (yellow)
 •	IJKL – moves cursor
 •	N – armored
 •	B – regular
 •	M – ranged
 •	O – wall
+
 Player 3 keys (purple)
 •	WASD – moves cursor
 •	C – armored
 •	X – regular
 •	V – ranged
 •	Y – wall
+
 Player 4 keys (blue)
 •	Arrow keys – moves cursor
 •	(.) Period – armored
 •	(/) Slash – regular
 •	(,) Comma – ranged
 •	(;) Semi-colon – wall
+
 Miscellaneous keys
 •	P – pause/start (running = true/false)
 •	Spacebar – reset 
