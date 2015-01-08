@@ -2,22 +2,37 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
-public class Easy extends Team {
+public class AI extends Player {
 
-	public Easy(Color tNumber, int unit0Key, int teamNumber, int popLimit) {
-		super(tNumber, unit0Key, teamNumber, popLimit);
+	public AI(Color tNumber, int unit0Key, int playerNumber, int popLimit, boolean teams) {
+		super(tNumber, unit0Key, playerNumber, popLimit, teams);
 	}
 
-	public void actionEasy(ActionEvent e, ArrayList<Team> teams,
+	boolean didNotAddObstructions = true;
+	
+	//Code for cursor
+	public void actionAI(ActionEvent e, ArrayList<Player> players,
 			ArrayList<Obstruction> obstructions, Structures structure) {
+		
+		//Ensure that the units actually don't stay on top of each other
 		xStart += r.nextInt(2);
 		yStart += r.nextInt(2);
 		xStart -= r.nextInt(2);
 		yStart -= r.nextInt(2);
-		Unit u = nearestUnit(totalTroops);
+		
+		Unit u = null;
+		
+		if(numberOfRanged(enemyUnits) < 30){
+			u = nearestUnit(totalTroops);
+		}else{
+			u = nearestRangedUnit(enemyUnits);
+		}
+		
+		//Spawns a fast unit if there are no units
 		if (u == null) {
 			spawnUnit(0);
 		} else {
+			//Spawns units when its next to an allied unit
 			if (distanceFromUnit(u) < 10 * 10) {
 				if (population < populationLimit) {
 					spawnUnit(0);
@@ -25,12 +40,14 @@ public class Easy extends Team {
 					spawnUnit(2);
 				}
 			} else {
+				//Moves the thing toward the nearest allied unit
 				direct(u.x, u.y, 10, "movement");
 			}
 		}
 
 	}
 
+	//Moves the cursor
 	public void direct(float xOther, float yOther, int boingFactor, String type) {
 		if (xStart > xOther) {
 			xStart -= boingFactor
@@ -48,6 +65,7 @@ public class Easy extends Team {
 		}
 	}
 
+	//Finds nearest Unit
 	public Unit nearestUnit(ArrayList<Unit> u) {
 		Unit mob = null;
 		for (Unit i : u) {
@@ -69,7 +87,40 @@ public class Easy extends Team {
 			return mob;
 		}
 	}
+	
+	public Unit nearestRangedUnit(ArrayList<Unit> u) {
+		Unit mob = null;
+		for (Unit i : u) {
+			if ((i != null)&&(i.type == 2)) {
+				if (mob == null) {
+					mob = i;
 
+				} else if (distanceFromUnit(i) < distanceFromUnit(mob)) {
+					if ((mob.health > 0)) {
+						mob = i;
+					}
+				}
+			}
+		}
+		if (mob == null) {
+			return mob;
+
+		} else {
+			return mob;
+		}
+	}
+	
+	public int numberOfRanged(ArrayList<Unit> u) {
+		int numberOfRanged = 0;
+		for(Unit i: u){
+			if(i.type == 2){
+				numberOfRanged++;
+			}
+		}
+		return numberOfRanged;
+	}
+
+	//Finds distance from unit
 	public float distanceFromUnit(Unit u) {
 		float distance = 10000;
 
@@ -98,6 +149,7 @@ public class Easy extends Team {
 		}
 	}
 
+	//Finds the vector speed
 	public float vectorSpeed(char vector, float speed, float x, float y,
 			float x2, float y2) {
 

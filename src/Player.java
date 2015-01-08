@@ -6,13 +6,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Team extends Thread {
+public class Player {
 
 	// Total units
 	ArrayList<Unit> totalTroops = new ArrayList<Unit>();
+	ArrayList<Unit> allyTroops = new ArrayList<Unit>();
+	ArrayList<Player> allPlayers = new ArrayList<Player>();
 
 	// Collection of all the Enemy Units
 	ArrayList<Unit> enemyUnits = new ArrayList<Unit>();
+
+	// Collection of what Enemies you target
+	ArrayList<Unit> targetEnemyUnits = new ArrayList<Unit>();
 
 	// Total buildings
 	ArrayList<Building> totalBuildings = new ArrayList<Building>();
@@ -21,7 +26,7 @@ public class Team extends Thread {
 	// Collection of all the Enemy/Empty Buildings
 	ArrayList<Building> enemyBuildings = new ArrayList<Building>();
 
-	// team side
+	// player side
 	int number;
 
 	int numberOfSoldiersType0 = 0;
@@ -58,6 +63,7 @@ public class Team extends Thread {
 	// Velocities
 	int xVel = 0;
 	int yVel = 0;
+	int speed = 1;
 
 	// Double tap timers
 	int up = 0;
@@ -77,38 +83,71 @@ public class Team extends Thread {
 	int startWidth = 10;
 	int startHeight = 10;
 
-	boolean teamHasDied = false;
+	boolean playerHasDied = false;
 
-	// Team Color
-	Color teamColor;
-	String colorOfTeam;
+	// Player Color
+	Color playerColor;
+	String colorOfPlayer;
+
+	// Allies
+	int allyPlayerNumber;
+	boolean areAllies = false;
 
 	// Random generator
 	Random r = new Random();
 
 	public void hasDied() {
-		teamHasDied = true;
+		playerHasDied = true;
 	}
 
 	public void fullReset() {
 		reset();
-		teamHasDied = false;
+		playerHasDied = false;
 		totalSpawned = 0;
 	}
 
-	public Team(Color tNumber, int unit0Key, int teamNumber, int popLimit) {
-		teamColor = tNumber;
-		if (teamColor == Color.RED) {
-			colorOfTeam = "Red";
+	public Player(Color tNumber, int unit0Key, int playerNumber, int popLimit, boolean teams) {
+		playerColor = tNumber;
+		allyPlayerNumber = playerNumber;
+		if (playerColor == Color.RED) {
+			colorOfPlayer = "Red";
 		}
-		if (teamColor == Color.GREEN) {
-			colorOfTeam = "Green";
+		if (playerColor == Color.GREEN) {
+			colorOfPlayer = "Green";
 		}
-		if (teamColor == Color.MAGENTA) {
-			colorOfTeam = "Magenta";
+		if (playerColor == Color.MAGENTA) {
+			colorOfPlayer = "Magenta";
 		}
-		if (teamColor == Color.YELLOW) {
-			colorOfTeam = "Yellow";
+		if (playerColor == Color.YELLOW) {
+			colorOfPlayer = "Yellow";
+		}
+		key0 = unit0Key;
+		number = playerNumber;
+		populationLimit = popLimit;
+		resetBuilder();
+		areAllies = teams;
+	}
+
+	public void setAllies(int Allies) {
+		allyPlayerNumber = Allies;
+		areAllies = true;
+	}
+
+	public Player(Color tNumber, int unit0Key, int teamNumber, int popLimit,
+			int Allies, ArrayList<Player> allPlayers) {
+		Allies = allyPlayerNumber;
+		playerColor = tNumber;
+		if (playerColor == Color.RED) {
+			colorOfPlayer = "Red";
+		}
+		if (playerColor == Color.BLUE) {
+			colorOfPlayer = "BLUE";
+		}
+		if (playerColor == Color.MAGENTA) {
+			colorOfPlayer = "Magenta";
+		}
+		if (playerColor == Color.YELLOW) {
+			colorOfPlayer = "Yellow";
 		}
 		key0 = unit0Key;
 		number = teamNumber;
@@ -138,7 +177,7 @@ public class Team extends Thread {
 		}
 	}
 
-	// Resets the Team
+	// Resets the Player
 	public void reset() {
 		totalTroops.clear();
 		enemyUnits.clear();
@@ -155,14 +194,14 @@ public class Team extends Thread {
 		maxIncome = populationLimit * initIncomeAmount;
 	}
 
-	// Paints everything in the team
-	public void paint(Graphics g, ArrayList<Team> t) {
+	// Paints everything in the player
+	public void paint(Graphics g, ArrayList<Player> t) {
 
 		// Paints Unit
 		for (Unit i : totalTroops) {
 			if (i != null)
 				if (i.health > 0) {
-					g.setColor(teamColor);
+					g.setColor(playerColor);
 					g.fillRect((int) i.x, (int) i.y, (int) i.width,
 							(int) i.height);
 
@@ -172,18 +211,19 @@ public class Team extends Thread {
 								(int) i.height);
 					}
 					if (i.type == 2) {
-						g.setColor(Color.BLUE);
+						g.setColor(Color.WHITE);
 						g.drawRect((int) i.x, (int) i.y, (int) i.width,
 								(int) i.height);
 					}
-					g.setColor(Color.WHITE);
+					g.setColor(Color.GREEN);
 					g.fillRect((int) i.x, (int) i.y, (int) (i.health
 							/ i.initHealth * i.width), (int) i.height / 5);
 				}
 		}
 
+		// Don't think this code is being used
 		for (Building b : totalBuildings) {
-			g.setColor(teamColor);
+			g.setColor(playerColor);
 			g.fillRect((int) b.x, (int) b.y, (int) b.width, (int) b.height);
 
 			g.setColor(Color.GRAY);
@@ -194,20 +234,20 @@ public class Team extends Thread {
 			g.setColor(Color.BLUE);
 			g.drawRect((int) b.x - 10, (int) b.y - 10, 10, 10);
 
-			g.setColor(teamColor);
+			g.setColor(playerColor);
 			g.drawArc(b.x + b.width / 2, b.y + b.height / 2, b.width, b.height,
 					0, 360);
 		}
 
-		g.setColor(teamColor);
+		g.setColor(playerColor);
 
-		// Drawing Builder
+		// Drawing Cursor
 		g.drawRect(xStart, yStart, startWidth, startHeight);
 		g.drawArc(xStart, yStart, startWidth, startHeight, 0, 360);
 		g.drawArc(xStart - commandAura + startWidth / 2, yStart - commandAura
 				+ startHeight / 2, commandAura * 2, commandAura * 2, 0, 360);
 
-		// Drawing statistics
+		// Drawing Statistics
 		g.drawString("T0: " + numberOfSoldiersType0, number * 100, 610);
 		g.drawString("T1: " + numberOfSoldiersType1, number * 100, 610 + 10);
 		g.drawString("T2: " + numberOfSoldiersType2, number * 100, 610 + 20);
@@ -220,6 +260,7 @@ public class Team extends Thread {
 			g.drawString("KV: " + round(KV, 3), number * 100, 610 + 80);
 		}
 
+		// Writing Amount of Money
 		g.drawString("Money: " + income, 500 + number * 100, 610);
 	}
 
@@ -234,7 +275,7 @@ public class Team extends Thread {
 	public void keySetPress(KeyEvent e, int up, int down, int left, int right) {
 		// Moving builder
 		if (e.getKeyCode() == up) {
-			yVel = -1;
+			yVel = -speed;
 			if (this.up > 0) {
 				for (Unit u : totalTroops) {
 					if ((u.x - xStart) * (u.x - xStart) + (u.y - yStart)
@@ -246,7 +287,7 @@ public class Team extends Thread {
 			}
 		}
 		if (e.getKeyCode() == down) {
-			yVel = 1;
+			yVel = speed;
 			if (this.down > 0) {
 				for (Unit u : totalTroops) {
 					if ((u.x - xStart) * (u.x - xStart) + (u.y - yStart)
@@ -257,7 +298,7 @@ public class Team extends Thread {
 			}
 		}
 		if (e.getKeyCode() == left) {
-			xVel = -1;
+			xVel = -speed;
 			if (this.left > 0) {
 				for (Unit u : totalTroops) {
 					if ((u.x - xStart) * (u.x - xStart) + (u.y - yStart)
@@ -268,7 +309,7 @@ public class Team extends Thread {
 			}
 		}
 		if (e.getKeyCode() == right) {
-			xVel = 1;
+			xVel = speed;
 			if (this.right > 0) {
 				for (Unit u : totalTroops) {
 					if ((u.x - xStart) * (u.x - xStart) + (u.y - yStart)
@@ -285,43 +326,45 @@ public class Team extends Thread {
 	public void keySetRelease(KeyEvent e, int spawn0, int spawn1, int spawn2,
 			int spawn3, int up, int down, int left, int right) {
 		if (population < populationLimit) {
-			// Spawning Unit type 1
+			// Spawning the Strong Unit
 			if (e.getKeyCode() == spawn1) {
 				spawnUnit(1);
 			}
-			// Spawning Unit type 2
+			// Spawning the Ranged Unit
 			if (e.getKeyCode() == spawn2) {
 				spawnUnit(2);
 			}
+			// Spawning the Wall Unit
 			if (e.getKeyCode() == spawn3) {
 				spawnUnit(3);
 			}
 		}
 
-		// Directions
+		// Double tapping to move the units within the circle in a direction
+		// moved towards
 		if (e.getKeyCode() == up) {
-			yVel++;
+			yVel+=speed;
 			this.up = doubleTapTime;
 		}
 		if (e.getKeyCode() == down) {
-			yVel--;
+			yVel-=speed;
 			this.down = doubleTapTime;
 		}
 		if (e.getKeyCode() == left) {
-			xVel++;
+			xVel+=speed;
 			this.left = doubleTapTime;
 		}
 		if (e.getKeyCode() == right) {
-			xVel--;
+			xVel-=speed;
 			this.right = doubleTapTime;
 		}
 	}
 
-	// Keying
+	// Setting up the key signature
 	public void keyPr(KeyEvent e) {
 
 		// Set 0
-		if (key0 == KeyEvent.VK_1) {
+		if (key0 == KeyEvent.VK_Z) {
 			keySetPress(e, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A,
 					KeyEvent.VK_D);
 		}
@@ -373,21 +416,25 @@ public class Team extends Thread {
 
 		}
 		if (enoughMoney) {
-			if (teamHasDied) {
+			if (playerHasDied) {
 
 			} else {
 				Unit u = new Unit(unitType, this, number);
 				u.x = xStart;
 				u.y = yStart;
 				totalTroops.add(u);
+				// Adding total spawned
 				totalSpawned++;
 				if (unitType == 0) {
+					// Counting the number of fast units
 					numberOfSoldiersType0 += 1;
 				}
 				if (unitType == 1) {
+					// Counting the number of strong units
 					numberOfSoldiersType1 += 1;
 				}
 				if (unitType == 2) {
+					// Counting the number of ranged units
 					numberOfSoldiersType2 += 1;
 				}
 			}
@@ -395,9 +442,9 @@ public class Team extends Thread {
 
 	}
 
-	// Release Keying for the team
+	// Release Keying for the player
 	public void keyRe(KeyEvent e, int keyNumber) {
-		// Spawning Unit type0
+		// Spawning Unit fast
 		if (e.getKeyCode() == keyNumber) {
 			if (population < populationLimit) {
 				spawnUnit(0);
@@ -405,9 +452,9 @@ public class Team extends Thread {
 		}
 
 		// Set 0
-		if (key0 == KeyEvent.VK_1) {
-			keySetRelease(e, KeyEvent.VK_1, KeyEvent.VK_2, KeyEvent.VK_3,
-					KeyEvent.VK_4, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A,
+		if (key0 == KeyEvent.VK_Z) {
+			keySetRelease(e, KeyEvent.VK_Z, KeyEvent.VK_E, KeyEvent.VK_R,
+					KeyEvent.VK_Q, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A,
 					KeyEvent.VK_D);
 		}
 
@@ -467,8 +514,46 @@ public class Team extends Thread {
 
 	}
 
-	public void actionPer(ActionEvent e, ArrayList<Team> teams,
-			ArrayList<Obstruction> obstructions, Structures structure,int timeTilIncome) {
+	public void addEnemies(ArrayList<Player> players) {
+		for (Player t : players) {
+			if ((t != this)) {
+				if ((t.allyPlayerNumber != allyPlayerNumber)) {
+					// Adds Enemy Units to enemyUnits Collection
+					if (enemyUnits.containsAll(t.totalTroops)) {
+					} else {
+						enemyUnits.removeAll(t.totalTroops);
+						enemyUnits.addAll(t.totalTroops);
+					}
+					// Adds Enemy Buildings to enemyBuildings Collection
+					if (enemyBuildings.containsAll(t.enemyBuildings)) {
+					} else {
+						enemyBuildings.removeAll(t.enemyBuildings);
+						enemyBuildings.addAll(t.enemyBuildings);
+					}
+				}
+			}
+		}
+	}
+	
+	public void addAllies(ArrayList<Player> players) {
+		for (Player t : players) {
+			if ((t != this)) {
+				if ((t.allyPlayerNumber == allyPlayerNumber)) {
+					// Adds Enemy Units to enemyUnits Collection
+					if (allyTroops.containsAll(t.totalTroops)) {
+					} else {
+						allyTroops.removeAll(t.totalTroops);
+						allyTroops.addAll(t.totalTroops);
+					}
+				}
+			}
+		}
+	}
+
+	// Action depending on the game being paused
+	public void actionPer(ActionEvent e, ArrayList<Player> players,
+			ArrayList<Obstruction> obstructions, Structures structure,
+			int timeTilIncome) {
 		maxIncome = populationLimit * initIncomeAmount;
 		buildingsControlled = 0;
 		// Income due to buildings
@@ -478,6 +563,9 @@ public class Team extends Thread {
 			}
 		}
 
+		setTargetEnemyUnits();
+
+		// Adding income based on the game type
 		if (structure.numberOfBuildings == 48) {
 			incomeAmount = 10 + buildingsControlled * 10;
 		} else if (structure.numberOfBuildings == 5) {
@@ -485,15 +573,15 @@ public class Team extends Thread {
 		} else if (structure.numberOfBuildings == 4) {
 			incomeAmount = 10 + buildingsControlled * 50;
 		} else {
-			incomeAmount = 500;
+			incomeAmount = 1000;
 		}
 
-		// Income
+		// Adding the income at intervals
 		if ((timeTilIncome <= 0) && (income <= maxIncome)) {
 			income += incomeAmount;
 		}
-		System.out.println("Time Til:" + timeTilIncome);
 
+		// Calculating KD and KV
 		if (totalDeaths > 0) {
 			KD = totalKills / totalDeaths;
 			KV = killValue / totalDeaths;
@@ -502,29 +590,61 @@ public class Team extends Thread {
 		// Reduces Lag
 		speedup++;
 
-		if (speedup > 300) {
+		if (speedup > 100) {
 			speedup = 0;
 			enemyUnits.clear();
 		}
 
-		for (Team t : teams) {
-			if ((t != this)) {
-				// Adds Enemy Units to enemyUnits Collection
-				if (enemyUnits.containsAll(t.totalTroops)) {
-				} else {
-					enemyUnits.removeAll(t.totalTroops);
-					enemyUnits.addAll(t.totalTroops);
+		addEnemies(players);
+		if(areAllies){
+			addAllies(players);
+		}
+
+		dealWithUnitCollections(obstructions);
+
+		// Deletes allied Buildings that have been lost
+		if (totalBuildings.isEmpty()) {
+		} else {
+			try {
+				for (Building b : totalBuildings) {
+					if (b.buildingSide != number) {
+						totalBuildings.remove(totalBuildings.indexOf(b));
+					}
 				}
-				// Adds Enemy Buildings to enemyBuildings Collection
-				if (enemyBuildings.containsAll(t.enemyBuildings)) {
-				} else {
-					enemyBuildings.removeAll(t.enemyBuildings);
-					enemyBuildings.addAll(t.enemyBuildings);
-				}
+			} catch (Exception e1) {
 			}
 		}
 
+		// Adds allied Buildings that have been gained
+		if (enemyBuildings.isEmpty()) {
+		} else {
+			try {
+				for (Building b : enemyBuildings) {
+					if (b.buildingSide == number) {
+						totalBuildings.add(b);
+						enemyBuildings.remove(enemyBuildings.indexOf(b));
+					}
+				}
+			} catch (Exception e1) {
+			}
+		}
+	}
+
+	public void dealWithAllies(ArrayList<Player> players) {
+		for (Player t : players) {
+			if (t.allyPlayerNumber == allyPlayerNumber) {
+				if (totalTroops.containsAll(t.totalTroops)) {
+				} else {
+					totalTroops.removeAll(t.totalTroops);
+					totalTroops.addAll(t.totalTroops);
+				}
+			}
+		}
+	}
+
+	public void dealWithUnitCollections(ArrayList<Obstruction> obstructions) {
 		// Deletes allied Units that have died
+		
 		if (totalTroops.isEmpty()) {
 		} else {
 			try {
@@ -550,11 +670,10 @@ public class Team extends Thread {
 							}
 						} else {
 
-							i.start(enemyUnits, totalTroops,
+							i.start(enemyUnits, totalTroops, targetEnemyUnits,
 									Main.lengthOfFrame, Main.heightOfFrame
 											- StatisticPanel.height, xStart,
-									yStart, obstructions);
-							i.resetKills();
+									yStart, obstructions, allyTroops);
 						}
 					} else {
 						totalTroops.remove(totalTroops.indexOf(i));
@@ -563,6 +682,7 @@ public class Team extends Thread {
 			} catch (Exception e1) {
 			}
 		}
+		
 
 		// Deletes enemy Units that have died
 		if (enemyUnits.isEmpty()) {
@@ -595,35 +715,10 @@ public class Team extends Thread {
 			} catch (Exception e1) {
 			}
 		}
+	}
 
-		// Buildings with income
-
-		// Deletes allied Buildings that have been lost
-		if (totalBuildings.isEmpty()) {
-		} else {
-			try {
-				for (Building b : totalBuildings) {
-					if (b.buildingSide != number) {
-						totalBuildings.remove(totalBuildings.indexOf(b));
-					}
-				}
-			} catch (Exception e1) {
-			}
-		}
-
-		// Adds allied Buildings that have been gained
-		if (enemyBuildings.isEmpty()) {
-		} else {
-			try {
-				for (Building b : enemyBuildings) {
-					if (b.buildingSide == number) {
-						totalBuildings.add(b);
-						enemyBuildings.remove(enemyBuildings.indexOf(b));
-					}
-				}
-			} catch (Exception e1) {
-			}
-		}
+	public void setTargetEnemyUnits() {
+		targetEnemyUnits = enemyUnits;
 	}
 
 }

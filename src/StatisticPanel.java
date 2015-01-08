@@ -8,9 +8,7 @@ public class StatisticPanel extends JPanel{
 	public static int height = 120;
 	public StatisticPanel(){
 		setSize(1200,100);
-		setBackground(Color.BLUE);
+		setBackground(Color.BLACK);
 		setVisible(true);
 	}
-	
-	
 }
