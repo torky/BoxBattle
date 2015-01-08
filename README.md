@@ -1,6 +1,6 @@
 # BoxBattle
 Game Explanation
-/n•	A kill is your box destroying an enemy box.
+•	A kill is your box destroying an enemy box.
 •	A death is your box’s destruction. (Health of box indicated by the green bar on top of it)
 •	A player creates a box by pressing a certain key.
 •	The box appears where the player’s cursor is. It will auto-target enemy boxes.
