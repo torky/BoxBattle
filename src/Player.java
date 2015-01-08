@@ -106,7 +106,8 @@ public class Player {
 		totalSpawned = 0;
 	}
 
-	public Player(Color tNumber, int unit0Key, int playerNumber, int popLimit, boolean teams) {
+	public Player(Color tNumber, int unit0Key, int playerNumber, int popLimit,
+			boolean teams) {
 		playerColor = tNumber;
 		allyPlayerNumber = playerNumber;
 		if (playerColor == Color.RED) {
@@ -343,19 +344,19 @@ public class Player {
 		// Double tapping to move the units within the circle in a direction
 		// moved towards
 		if (e.getKeyCode() == up) {
-			yVel+=speed;
+			yVel += speed;
 			this.up = doubleTapTime;
 		}
 		if (e.getKeyCode() == down) {
-			yVel-=speed;
+			yVel -= speed;
 			this.down = doubleTapTime;
 		}
 		if (e.getKeyCode() == left) {
-			xVel+=speed;
+			xVel += speed;
 			this.left = doubleTapTime;
 		}
 		if (e.getKeyCode() == right) {
-			xVel-=speed;
+			xVel -= speed;
 			this.right = doubleTapTime;
 		}
 	}
@@ -534,7 +535,7 @@ public class Player {
 			}
 		}
 	}
-	
+
 	public void addAllies(ArrayList<Player> players) {
 		for (Player t : players) {
 			if ((t != this)) {
@@ -596,7 +597,7 @@ public class Player {
 		}
 
 		addEnemies(players);
-		if(areAllies){
+		if (areAllies) {
 			addAllies(players);
 		}
 
@@ -633,10 +634,10 @@ public class Player {
 	public void dealWithAllies(ArrayList<Player> players) {
 		for (Player t : players) {
 			if (t.allyPlayerNumber == allyPlayerNumber) {
-				if (totalTroops.containsAll(t.totalTroops)) {
+				if (allyTroops.containsAll(t.totalTroops)) {
 				} else {
-					totalTroops.removeAll(t.totalTroops);
-					totalTroops.addAll(t.totalTroops);
+					allyTroops.removeAll(t.totalTroops);
+					allyTroops.addAll(t.totalTroops);
 				}
 			}
 		}
@@ -644,7 +645,7 @@ public class Player {
 
 	public void dealWithUnitCollections(ArrayList<Obstruction> obstructions) {
 		// Deletes allied Units that have died
-		
+
 		if (totalTroops.isEmpty()) {
 		} else {
 			try {
@@ -682,7 +683,6 @@ public class Player {
 			} catch (Exception e1) {
 			}
 		}
-		
 
 		// Deletes enemy Units that have died
 		if (enemyUnits.isEmpty()) {
@@ -698,8 +698,9 @@ public class Player {
 
 							}
 
-							if (i.killer == number) {
+							if ((i.killer == number) && (i.notReturnedKills)) {
 								totalKills++;
+								i.returnKill();
 								if ((i.type == 0) || (i.type == 2)) {
 									killValue += 1;
 								} else if (i.type == 1) {

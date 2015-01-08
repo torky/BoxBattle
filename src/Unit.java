@@ -19,7 +19,7 @@ public class Unit {
 	int type;
 	int soldierPop;
 	int kills;
-	boolean returnedKills = true;
+	boolean notReturnedKills = true;
 	boolean notDefending = true;
 	int side;
 	int killer = -1;
@@ -101,7 +101,7 @@ public class Unit {
 			reload = 0;
 			reloadTime = 100;
 			boing = 0;
-			soldierPop = 0;
+			soldierPop = 1;
 		}
 
 	}
@@ -470,6 +470,10 @@ public class Unit {
 
 	public void reAim() {
 		enemyUnit = null;
+	}
+	
+	public void returnKill(){
+		notReturnedKills = false;
 	}
 	
 

@@ -9,7 +9,7 @@ public class Window extends JFrame {
 	
 	public Window() {
 
-		super.setTitle("BoxBattle 6.1");
+		super.setTitle("BoxBattle 6.2.1");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		add(menu);
 	}
