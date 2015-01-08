@@ -1,7 +1,5 @@
 
-import java.applet.Applet;
-
-public class Main extends Applet{
+public class Main {
 	
 	public static int lengthOfFrame = 1200;
 	public static int heightOfFrame = 720;
