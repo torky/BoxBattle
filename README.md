@@ -1,4 +1,6 @@
 # BoxBattle
+READ THE RAW, THAT WAY IT IS EASIER ON YOUR EYES
+
 Game Explanation
 •	A kill is your box destroying an enemy box.
 •	A death is your box’s destruction. (Health of box indicated by the green bar on top of it)
